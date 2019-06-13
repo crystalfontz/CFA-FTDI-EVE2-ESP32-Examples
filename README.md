@@ -18,13 +18,15 @@ Running some of the examples requires connection of an extra (not supplied in th
 * Power on the LCD module with a 3.3v supply first
 * Connect the Seeeduino to your PC with a USB cable
 * Run the Arduino software, and load one of the project INO files.
+* Copy the files from the associated sd_contents directory (if it exists, otherwise this step is not required) to a microSD card, and insert it into the microSD card reader attached to the Seeeduino.
 * Compile and upload the firmware to the Seeeduino
 
 On completion of uploading complied firmware, the display should light, show a touch-screen calibration screen, and then proceed to the example.
 
 ## microSD Card Reader Connection
 Some of of the examples use data stored on a microSD card. As the Seeeduino does not have a microSD slot, one must be provided by the user.
-The easiest way of doing so is by using a 3.3 volt microSD breakout board (make sure it does not have 5v level-shifters). An [example can be found here](https://www.sparkfun.com/products/544).
+The easiest way of doing so is by using a 3.3 volt microSD breakout board (make sure it does not have 5v level-shifters).
+An example microSD breakout board [can be found here](https://www.sparkfun.com/products/544).
 
 Connection is as follows:
 * microSD 3.3V -> Seeeduino 3.3V

@@ -1,4 +1,11 @@
 /*
+// 
+// Slight modifications to support the Crystalfontz FT9xx based modules using
+// the Goodix GT911 capacitive touch screen controller.
+//
+// 2019-06-01 Mark Williams / Crystalfontz
+//
+//---------------------------------------------------------------------------
 
 Copyright (c) Bridgetek Pte Ltd
 
@@ -31,6 +38,8 @@ Revision History:
 #include "Platform.h"
 #include "Gpu.h"
 #include "Hal_Config.h"
+
+#include "cf_gt911.h"
 
 #ifdef USE_SDCARD
 #include "sdcard.h"
@@ -83,8 +92,6 @@ bool_t    Gpu_Hal_Open(Gpu_Hal_Context_t *host)
     SPI.setClockDivider(SPI_CLOCK_DIV2);
     SPI.setBitOrder(MSBFIRST);
     SPI.setDataMode(SPI_MODE0);
-
-
 
     /* Initialize the context valriables */
     host->cmd_fifo_wp = host->dl_buff_wp = 0;
@@ -1219,35 +1226,37 @@ void Gpu_ClearScreen(Gpu_Hal_Context_t *host)
 
 void BootupConfig(Gpu_Hal_Context_t *host)
 {
-    Gpu_Hal_Powercycle(host,TRUE);
-
-    /* FT81x will be in SPI Single channel after POR */
-    #ifdef FT81X_ENABLE
-    Gpu_Hal_SetSPI(host, GPU_SPI_SINGLE_CHANNEL, GPU_SPI_ONEDUMMY);
-    #endif
-    /* Access address 0 to wake up the FT800 */
-    Gpu_HostCommand(host,GPU_ACTIVE_M);
-    Gpu_Hal_Sleep(300);
+  Gpu_Hal_Powercycle(host,TRUE);
+  
+  /* FT81x will be in SPI Single channel after POR */
+  #ifdef FT81X_ENABLE
+  Gpu_Hal_SetSPI(host, GPU_SPI_SINGLE_CHANNEL, GPU_SPI_ONEDUMMY);
+  #endif
+  
+  /* Access address 0 to wake up the FT800 */
+  Gpu_HostCommand(host,GPU_ACTIVE_M);
+  Gpu_Hal_Sleep(300);
 
     /* Set the clk to external clock */
 #if (!defined(ME800A_HV35R) && !defined(ME810A_HV35R) && !defined(ME812AU_WH50R) && !defined(ME813AU_WH50C) && !defined(ME810AU_WH70R) && !defined(ME811AU_WH70C))
-    Gpu_HostCommand(host,GPU_EXTERNAL_OSC);
-    Gpu_Hal_Sleep(10);
+  Gpu_HostCommand(host,GPU_EXTERNAL_OSC);
+  Gpu_Hal_Sleep(10);
 #endif
 
-    {
-        uint8_t chipid;
-        //Read Register ID to check if FT800 is ready.
-        chipid = Gpu_Hal_Rd8(host, REG_ID);
-        while(chipid != 0x7C)
-        {
-            chipid = Gpu_Hal_Rd8(host, REG_ID);
-            delay(100);
-        }
-
-    }
-    /* Configuration of LCD display */
-
+  uint8_t chipid;
+  //Read Register ID to check if FT800 is ready.
+  chipid = Gpu_Hal_Rd8(host, REG_ID);
+  while(chipid != 0x7C)
+  {
+    chipid = Gpu_Hal_Rd8(host, REG_ID);
+    delay(100);
+  }
+  
+  /* Configuration of LCD display */
+#if defined(FT813_GT911)
+  //Crystalfontz - added capacitive panel setup
+  FT8xx_Init_Goodix_GT911(host);
+#endif
 
 #if defined(ME800A_HV35R)
     /* After recognizing the type of chip, perform the trimming if necessary */
@@ -1273,6 +1282,8 @@ void BootupConfig(Gpu_Hal_Context_t *host)
     /* Touch configuration - configure the resistance value to 1200 - this value is specific to customer requirement and derived by experiment */
     Gpu_Hal_Wr16(host, REG_TOUCH_RZTHRESH,RESISTANCE_THRESHOLD);
 #endif
+
+/* Crystalfontz - removed as it effect GT911 setup
 #if defined(FT81X_ENABLE)
     Gpu_Hal_Wr16(host, REG_GPIOX_DIR, 0xffff);
     Gpu_Hal_Wr16(host, REG_GPIOX, 0xffff);
@@ -1280,66 +1291,86 @@ void BootupConfig(Gpu_Hal_Context_t *host)
     Gpu_Hal_Wr8(host, REG_GPIO_DIR,0xff);
     Gpu_Hal_Wr8(host, REG_GPIO,0xff);
 #endif
+*/
 
-    /*Clear the screen */
-    Gpu_Hal_WrMem(host, RAM_DL,(uint8_t *)DLCODE_BOOTUP,sizeof(DLCODE_BOOTUP));
-    Gpu_Hal_Wr8(host, REG_DLSWAP,DLSWAP_FRAME);
-    Gpu_Hal_Wr8(host, REG_PCLK,DispPCLK);//after this display is visible on the LCD
+#if defined(FT813_GT911)
+  //Crystalfontz - added capacitive panel setup
+  //Touch on, at rate of touch IC
+  Gpu_Hal_Wr8(host, REG_CTOUCH_MODE, CTOUCH_MODE_CONTINUOUS);
+  //Set compatibility (single touch) mode until after touch cal.
+  Gpu_Hal_Wr8(host, REG_CTOUCH_EXTEND, CTOUCH_EXTEND_COMPATIBILITY);
+#endif // (TOUCH_TYPE==TOUCH_CAPACITIVE)
 
+  //Clear the screen
+  Gpu_Hal_WrMem(host, RAM_DL,(uint8_t *)DLCODE_BOOTUP,sizeof(DLCODE_BOOTUP));
+  Gpu_Hal_Wr8(host, REG_DLSWAP,DLSWAP_FRAME);
+  Gpu_Hal_Wr8(host, REG_PCLK,DispPCLK);//after this display is visible on the LCD
 
 #ifdef ENABLE_ILI9488_HVGA_PORTRAIT
-    /* to cross check reset pin */
-    Gpu_Hal_Wr8(host, REG_GPIO,0xff);
-    delay(120);
-    Gpu_Hal_Wr8(host, REG_GPIO,0x7f);
-    delay(120);
-    Gpu_Hal_Wr8(host, REG_GPIO,0xff);
-
-    /* Boot ILI9488 */
-    ILI9488_Bootup();
-
+  // to cross check reset pin 
+  Gpu_Hal_Wr8(host, REG_GPIO,0xff);
+  delay(120);
+  Gpu_Hal_Wr8(host, REG_GPIO,0x7f);
+  delay(120);
+  Gpu_Hal_Wr8(host, REG_GPIO,0xff);
+  // Boot ILI9488 
+  ILI9488_Bootup();
 #endif
 
-
-
-    /* make the spi to quad mode - addition 2 bytes for silicon */
+  // make the spi to quad mode - addition 2 bytes for silicon
 #ifdef FT81X_ENABLE
-    /* api to set quad and numbe of dummy bytes */
+  // api to set quad and numbe of dummy bytes
 #ifdef ENABLE_SPI_QUAD
-    Gpu_Hal_SetSPI(host,GPU_SPI_QUAD_CHANNEL,GPU_SPI_TWODUMMY);
+  Gpu_Hal_SetSPI(host,GPU_SPI_QUAD_CHANNEL,GPU_SPI_TWODUMMY);
 #elif ENABLE_SPI_DUAL
-    Gpu_Hal_SetSPI(host,GPU_SPI_DUAL_CHANNEL,GPU_SPI_TWODUMMY);
+  Gpu_Hal_SetSPI(host,GPU_SPI_DUAL_CHANNEL,GPU_SPI_TWODUMMY);
 #else
-    Gpu_Hal_SetSPI(host,GPU_SPI_SINGLE_CHANNEL,GPU_SPI_ONEDUMMY);
+  Gpu_Hal_SetSPI(host,GPU_SPI_SINGLE_CHANNEL,GPU_SPI_ONEDUMMY);
+#endif
 #endif
 
-#endif
+  // Crystalfontz - Added - Enable the DISP line of the LCD.
+  // REG_GPIOX
+  // 1111 1100 0000 0000
+  // 5432 1098 7654 3210
+  // DGGP SSIr rrrr GGGG 
+  // |||| |||| |||| ||||-- GPIO 0 PIN
+  // |||| |||| |||| |||--- GPIO 1 PIN
+  // |||| |||| |||| ||---- GPIO 2 PIN
+  // |||| |||| |||| |----- GPIO 3 PIN
+  // |||| |||| ||||------- (reserved)
+  // |||| |||------------- INT_N: 0=Open Drain, 1 = default
+  // |||| ||-------------- SPI drive: 00=5mA, 01=10mA, 10=15mA, 11=20mA
+  // ||||----------------- PCLK+RGB Drive: 0=4mA, 1=10mA
+  // |||------------------ GPIO drive:  00=5mA, 01=10mA, 10=15mA, 11=20mA
+  // |-------------------- DISP PIN
+  Gpu_Hal_Wr16(host, REG_GPIOX, Gpu_Hal_Rd16(host, REG_GPIOX) | 0x8000);
 
-    host->cmd_fifo_wp = Gpu_Hal_Rd16(host,REG_CMD_WRITE);
-
-    #ifdef USE_SDCARD 
-    /* Init HW Hal */
-    pinMode(SDCARD_CS,OUTPUT);
-    digitalWrite(SDCARD_CS,HIGH);
-    delay(100);
-    /* Init ARDUINO SDcard */
-    sd_present =  imageFile.SD.begin(SDCARD_CS); 
-    SPI.setClockDivider(SPI_CLOCK_DIV2);
-    SPI.setBitOrder(MSBFIRST);
-    SPI.setDataMode(SPI_MODE0); 
-    if(!sd_present){
-        while(1){
-            Gpu_CoCmd_Dlstart(host);        // start
-            Gpu_Hal_WrCmd32(host,CLEAR(1,1,1));
-            Gpu_Hal_WrCmd32(host,COLOR_RGB(255,255,255));
-            Gpu_CoCmd_Text(host,DispWidth>>1,DispHeight>>1,29,OPT_CENTER,"Storage Device not Found");
-            Gpu_Hal_WrCmd32(host,DISPLAY());
-            Gpu_CoCmd_Swap(host);
-            Gpu_Hal_WaitCmdfifo_empty(host);
-        }
+  //read back pointer position
+  host->cmd_fifo_wp = Gpu_Hal_Rd16(host,REG_CMD_WRITE);
+  
+  #ifdef USE_SDCARD 
+  /* Init HW Hal */
+  pinMode(SDCARD_CS,OUTPUT);
+  digitalWrite(SDCARD_CS,HIGH);
+  delay(100);
+  /* Init ARDUINO SDcard */
+  sd_present =  imageFile.SD.begin(SDCARD_CS); 
+  SPI.setClockDivider(SPI_CLOCK_DIV2);
+  SPI.setBitOrder(MSBFIRST);
+  SPI.setDataMode(SPI_MODE0); 
+  if(!sd_present){
+    while(1){
+      Gpu_CoCmd_Dlstart(host);        // start
+      Gpu_Hal_WrCmd32(host,CLEAR(1,1,1));
+      Gpu_Hal_WrCmd32(host,COLOR_RGB(255,255,255));
+      Gpu_CoCmd_Text(host,DispWidth>>1,DispHeight>>1,29,OPT_CENTER,"Storage Device not Found");
+      Gpu_Hal_WrCmd32(host,DISPLAY());
+      Gpu_CoCmd_Swap(host);
+      Gpu_Hal_WaitCmdfifo_empty(host);
     }
-    #endif
-
+  }
+  #endif
 }
 
 void Gpu_Hal_LoadImageToMemory(Gpu_Hal_Context_t *host, char8_t* fileName, uint32_t destination, uint8_t type){
@@ -1403,9 +1434,3 @@ void Gpu_Hal_LoadImageToMemory(Gpu_Hal_Context_t *host, char8_t* fileName, uint3
 *                      FOR ARDUINO PLATFORMS ONLY
 *
 *=========================================================================*/
-
-
-
-
-
-

@@ -1,3 +1,15 @@
+/*============================================================================
+// 
+// Example Ardunio/Seeduino firmware for use with the Crystalfontz
+// CFAF800480E0-050SC-A1-2 display module kit.
+//
+// This firmware was originally sourced from the FTDI/Bridgetek website and
+// has been slightly modified to work correctly with the Crystalfontz
+// kit hardware.
+//
+// http://www.crystalfontz.com
+//
+//--------------------------------------------------------------------------*/
 /*****************************************************************************
 * Copyright (c) Bridgetek Pte Ltd.
 * Software License Agreement
@@ -33,7 +45,7 @@ Version 0.1 - 2014/05/30 initial draft of the release notes
 
 //#define BACKGROUND_ANIMATION_1
 //#define BACKGROUND_ANIMATION_2
-#define BACKGROUND_ANIMATION_3
+#define BACKGROUND_ANIMATION_3 /* FIXED FOR 800x480 DISPLAY SIZE */
 //#define BACKGROUND_ANIMATION_4
 //#define BACKGROUND_ANIMATION_5
 //#define BACKGROUND_ANIMATION_6
@@ -510,8 +522,9 @@ void Backgroundanimation_2()
 #endif
 
 #ifdef BACKGROUND_ANIMATION_3
-uint16_t xoffset_array[30],dx_pts[20];
-uint8_t yoffset_array[30],bitmap_handle[30],dy_pts[20];
+uint16_t xoffset_array[30], dx_pts[20];
+uint16_t yoffset_array[30], dy_pts[20];
+uint8_t bitmap_handle[30];
 uint8_t rate_cts[30],iteration_cts[30];
 
 void Backgroundanimation_3()
@@ -520,62 +533,64 @@ void Backgroundanimation_3()
 	uint8_t alpha  = 0,VEL = 0;
 	static uint16_t t1 = 0;
 	int16_t xoff = 0 ,yoff = 0;
-	if(istouch())	
-	{ 
-		t1 = 0; VEL  = 2; 
-	} 
-	else {
-		VEL = linear(2,1,t1,100); 
-		if(t1<100) t1++; 
-	}
-	//clear the background color
-	App_WrCoCmd_Buffer(phost,SAVE_CONTEXT());
-	App_WrCoCmd_Buffer(phost,CLEAR_COLOR_RGB(0,0,0));
-	App_WrCoCmd_Buffer(phost,CLEAR_COLOR_A(0));
-	App_WrCoCmd_Buffer(phost,CLEAR(1,1,1));
-	App_WrCoCmd_Buffer(phost,COLOR_MASK(1,1,1,0));
-	//draw the cmd gradient with scissors
-	App_WrCoCmd_Buffer(phost,SCISSOR_SIZE(480,136));
-	App_WrCoCmd_Buffer(phost,SCISSOR_XY(0,0));
-	Gpu_CoCmd_Gradient(phost,0,0,0x708fa1,0,136,0xc4cdd2);
-	App_WrCoCmd_Buffer(phost,SCISSOR_XY(0,136));
-	Gpu_CoCmd_Gradient(phost,0,136,0xc4cdd2,0,272,0x4f7588);
-	
-	App_WrCoCmd_Buffer(phost,SCISSOR_XY(0,0));
-	App_WrCoCmd_Buffer(phost,SCISSOR_SIZE(512,512));//reprogram with  default values
 
-	//draw 20 points with various radious with additive blending
-	App_WrCoCmd_Buffer(phost,BEGIN(FTPOINTS));	
-	App_WrCoCmd_Buffer(phost,COLOR_MASK(1,1,1,0));
-	App_WrCoCmd_Buffer(phost,COLOR_RGB(255,255,255));
-	for(i=0;i<20;i++)
-	{
-		//if(0 == i%4)		
-		alpha  = linear(80,0,iteration_cts[i],rate_cts[i]);
-		if(alpha<75)
-		{
-			App_WrCoCmd_Buffer(phost,POINT_SIZE(16*(30 + (3*i/2))));			
-			App_WrCoCmd_Buffer(phost,COLOR_A(alpha));
-			xoff = linear(xoffset_array[i],dx_pts[i],iteration_cts[i],rate_cts[i]);
-			yoff = linear(yoffset_array[i],dy_pts[i],iteration_cts[i],rate_cts[i]);
-			App_WrCoCmd_Buffer(phost,VERTEX2F(xoff*16,yoff*16));
-		}
-	}
-//	
-	App_WrCoCmd_Buffer(phost,RESTORE_CONTEXT());
-	for(i = 0; i<20 ; i++)
-	{
-		if(iteration_cts[i]==0)
-		{
-			xoffset_array[i] = random(DispWidth);
-			yoffset_array[i] = 100+random(DispHeight/4);
-			dx_pts[i] = random(DispWidth);
-			dy_pts[i] = random(255);				
-			rate_cts[i] = 100+random(155);
-		}
-		if(iteration_cts[i]<rate_cts[i])iteration_cts[i]+=VEL; else{ iteration_cts[i] = 0;}
-	}
+if(istouch())  
+  { 
+    t1 = 0; VEL  = 2; 
+  } 
+  else {
+    VEL = linear(2,1,t1,100); 
+    if(t1<100) t1++; 
+  }
+  //clear the background color
+  App_WrCoCmd_Buffer(phost,SAVE_CONTEXT());
+  App_WrCoCmd_Buffer(phost,CLEAR_COLOR_RGB(0,0,0));
+  App_WrCoCmd_Buffer(phost,CLEAR_COLOR_A(0));
+  App_WrCoCmd_Buffer(phost,CLEAR(1,1,1));
+  App_WrCoCmd_Buffer(phost,COLOR_MASK(1,1,1,0));
+  //draw the cmd gradient with scissors
+  App_WrCoCmd_Buffer(phost,SCISSOR_SIZE(DispWidth,DispHeight/2));
+  App_WrCoCmd_Buffer(phost,SCISSOR_XY(0,0));
+  Gpu_CoCmd_Gradient(phost,0,0,0x708fa1,0,DispHeight/2,0xc4cdd2);
+  App_WrCoCmd_Buffer(phost,SCISSOR_XY(0,DispHeight/2));
+  Gpu_CoCmd_Gradient(phost,0,DispHeight/2,0xc4cdd2,0,DispHeight,0x4f7588);
+  
+  App_WrCoCmd_Buffer(phost,SCISSOR_XY(0,0));
+  App_WrCoCmd_Buffer(phost,SCISSOR_SIZE(DispWidth,DispHeight));//reprogram with  default values
 
+  //draw 20 points with various radious with additive blending
+  App_WrCoCmd_Buffer(phost, VERTEX_FORMAT(0));
+  App_WrCoCmd_Buffer(phost,BEGIN(FTPOINTS));  
+  App_WrCoCmd_Buffer(phost,COLOR_MASK(1,1,1,0));
+  App_WrCoCmd_Buffer(phost,COLOR_RGB(255,255,255));
+  for(i=0;i<20;i++)
+  {
+    //if(0 == i%4)    
+    alpha  = linear(80,0,iteration_cts[i],rate_cts[i]);
+    if(alpha<75)
+    {
+      App_WrCoCmd_Buffer(phost,POINT_SIZE(16*(30 + (3*i/2))));      
+      App_WrCoCmd_Buffer(phost,COLOR_A(alpha));
+      xoff = linear(xoffset_array[i],dx_pts[i],iteration_cts[i],rate_cts[i]);
+      yoff = linear(yoffset_array[i],dy_pts[i],iteration_cts[i],rate_cts[i]);
+      App_WrCoCmd_Buffer(phost,VERTEX2F(xoff,yoff));
+    }
+  }
+//  
+  App_WrCoCmd_Buffer(phost,RESTORE_CONTEXT());
+  for(i = 0; i<20 ; i++)
+  {
+    if(iteration_cts[i]==0)
+    {
+      xoffset_array[i] = random(DispWidth);
+      //yoffset_array[i] = 100+random(DispHeight/4);
+      yoffset_array[i] = random(DispHeight);
+      dx_pts[i] = random(DispWidth);
+      dy_pts[i] = random(DispHeight);        
+      rate_cts[i] = 100+random(155);
+    }
+    if(iteration_cts[i]<rate_cts[i])iteration_cts[i]+=VEL; else{ iteration_cts[i] = 0;}
+  }
 	return;
 }
 #endif
@@ -1571,12 +1586,20 @@ int32_t main(int32_t argc,char8_t *argv[])
 void setup()
 #endif
 {	
+  Serial.begin(9600);
+  Serial.println(F("STARTING"));
     phost = &host;
     /* Init HW Hal */
     App_Common_Init(phost);
     /* Show Logo, do calibration and display welcome screeen */
     App_Common_Start(phost,info);
     /* Main application */
+
+    Serial.print(F("WIDTH="));
+    Serial.println(DispWidth);
+    Serial.print(F("HEIGHT="));
+    Serial.println(DispHeight);    
+    
 	Load_Thumbnails();
 	#if defined(ANDROID_METHOD)
 	android_menu();
@@ -1599,16 +1622,3 @@ void loop()
 }
 
 /* Nothing beyond this */
-
-
-
-
-
-
-
-
-
-
-
-
-

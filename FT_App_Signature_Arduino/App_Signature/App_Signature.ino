@@ -1,3 +1,15 @@
+/*============================================================================
+// 
+// Example Ardunio/Seeduino firmware for use with the Crystalfontz
+// CFAF800480E0-050SC-A1-2 display module kit.
+//
+// This firmware was originally sourced from the FTDI/Bridgetek website and
+// has been slightly modified to work correctly with the Crystalfontz
+// kit hardware.
+//
+// http://www.crystalfontz.com
+//
+//--------------------------------------------------------------------------*/
 /*****************************************************************************
 * Copyright (c) Bridgetek Pte Ltd.
 * Software License Agreement
@@ -49,8 +61,10 @@ void Signature()
   int16_t oy = (2 * DispHeight / 3) - sh;
   uint16_t a = 0; 
   
-  x = DispWidth*0.168;
-  y = DispHeight*0.317;
+  //x = DispWidth*0.168;
+  //y = DispHeight*0.317;
+  x = DispWidth*0.168*0.4;
+  y = DispHeight*0.317*0.4;
   w =  DispWidth-(2*x);
   h =  DispHeight-(2.5*y);
   
@@ -182,16 +196,3 @@ void loop()
 
 
 /* Nothing beyond this */
-
-
-
-
-
-
-
-
-
-
-
-
-

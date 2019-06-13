@@ -1,3 +1,15 @@
+/*============================================================================
+// 
+// Example Ardunio/Seeduino firmware for use with the Crystalfontz
+// CFAF800480E0-050SC-A1-2 display module kit.
+//
+// This firmware was originally sourced from the FTDI/Bridgetek website and
+// has been slightly modified to work correctly with the Crystalfontz
+// kit hardware.
+//
+// http://www.crystalfontz.com
+//
+//--------------------------------------------------------------------------*/
 /*****************************************************************************
 * Copyright (c) Bridgetek Pte Ltd.
 * Software License Agreement
@@ -1005,7 +1017,7 @@ either they can be based on itterations or based on time giffies */
         App_WrCoCmd_Buffer(phost, CLEAR(1, 1, 1)); // clear screen
         App_WrCoCmd_Buffer(phost,COLOR_RGB(255,255,255));
         /* Background gradient */
-        Gpu_CoCmd_Gradient(phost, 0,0,0x66B4E8,0,272,0x132B3B);
+        Gpu_CoCmd_Gradient(phost, 0,0,0x66B4E8,0,DispHeight,0x132B3B);
 
         /* Draw background bitmaps */
         App_WrCoCmd_Buffer(phost,COLOR_RGB(0,0,0));
@@ -1604,10 +1616,3 @@ void loop()
 
 
 /* Nothing beyond this */
-
-
-
-
-
-
-

@@ -39,17 +39,28 @@ Revision History:
 #define ARDUINO_PLATFORM
 
 /* Module specific configurations */
-#define VM800P43_50
+#define CFAF800480E0_050SC_A1_2
+//#define VM800P43_50
 //#define VM800P35
 //#define VM801P43_50
 //#define VM800B43_50
 //#define VM800B35
 //#define VM801B43_50
 
-
+#ifdef CFAF800480E0_050SC_A1_2
+#define DISPLAY_RESOLUTION_WVGA                 (1)
+#define FT813_ENABLE                            (1)
+#define ENABLE_SPI_SINGLE                       (1)
+//#define SDCARD_CS                             (8)
+#define FT800_INT                               (7)
+#define FT800_PD_N                              (8)
+#define FT800_CS                                (9)
+#define ARDUINO_PLATFORM_SPI                    (1)
+#define ME800A_HV35R /*hack to remove some defualt ext clock setup*/
+#define FT813_GT911 /*goodix gt911 enable*/
+#endif
 
 #ifdef VM800P43_50
-
 #define DISPLAY_RESOLUTION_WQVGA                (1)
 #define FT800_ENABLE                            (1)
 #define ENABLE_SPI_SINGLE                       (1)
@@ -145,7 +156,7 @@ Revision History:
 #endif
 
 /* Custom configuration set by the user */
-#if (!defined(VM800P43_50) && !defined(VM800P35) &&!defined(VM801P43_50) &&!defined(VM800B43_50) &&!defined(VM800B35) &&!defined(VM801B43_50))
+#if (!defined(VM800P43_50) && !defined(VM800P35) &&!defined(VM801P43_50) &&!defined(VM800B43_50) &&!defined(VM800B35) &&!defined(VM801B43_50) &&!defined(CFAF800480E0_050SC_A1_2))
 #define DISPLAY_RESOLUTION_QVGA                     (1)
 #define DISPLAY_RESOLUTION_WQVGA                    (1)
 #define DISPLAY_RESOLUTION_WVGA                     (1)
@@ -228,7 +239,3 @@ typedef PROGMEM const int32_t        prog_int32_t;
 
 #endif /*_PLATFORM_H_*/
 /* Nothing beyond this*/
-
-
-
-

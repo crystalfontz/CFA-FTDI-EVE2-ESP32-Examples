@@ -26,7 +26,7 @@ On completion of uploading complied firmware, the display should light, show a t
 
 ## microSD Card Reader Connection
 Some of of the examples use data stored on a microSD card. As the Seeeduino does not have a microSD slot, one must be provided by the user.
-The easiest way of doing so is by using a 3.3 volt microSD breakout board (make sure it does not have 5v level-shifters).
+The easiest way of doing so is by using a 3.3 volt microSD breakout board (make sure it does not have 5v level-shifters) connected to the Seeeduino using jumper wires.
 An example microSD breakout board [can be found here](https://www.sparkfun.com/products/544).
 
 Connection is as follows:

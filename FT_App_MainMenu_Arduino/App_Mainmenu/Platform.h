@@ -63,7 +63,7 @@ Revision History:
 #define DISPLAY_RESOLUTION_WVGA                 (1)
 #define FT813_ENABLE                            (1)
 #define ENABLE_SPI_SINGLE                       (1)
-#define SDCARD_CS                               (4)
+#define SDCARD_CS                               (10)
 #define FT800_INT                               (7)
 #define FT800_PD_N                              (8)
 #define FT800_CS                                (9)

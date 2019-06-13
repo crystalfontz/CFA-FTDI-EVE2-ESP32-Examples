@@ -722,6 +722,8 @@ typedef struct Gpu_Fonts
     #define DispDither     1
 
 #elif defined(DISPLAY_RESOLUTION_WVGA)
+#if (0)
+//FTDI's timing    
     /* Values specific to QVGA LCD display */
     #define DispWidth      800L
     #define DispHeight     480L
@@ -738,6 +740,94 @@ typedef struct Gpu_Fonts
     #define DispPCLKPol    1
     #define DispCSpread    0
     #define DispDither     1
+#else
+//Timing for Crystalfontz CFAF800480E0-050SC-A1
+//============================================================================
+// Define RGB output pins order, determined by PCB layout
+#define LCD_SWIZZLE      (0)
+// Define active edge of PCLK. Observed by scope:
+//  0: Data is put out coincident with falling edge of the clock.
+//     Rising edge of the clock is in the middle of the data.
+//  1: Data is put out coincident with rising edge of the clock.
+//     Falling edge of the clock is in the middle of the data.
+#define LCD_PCLKPOL      (1)
+// LCD drive strength: 0=5mA, 1=10mA
+#define LCD_DRIVE_10MA   (0)
+// Spread Spectrum on RGB signals. Probably not a good idea at higher
+// PCLK frequencies.
+#define LCD_PCLK_CSPREAD (0)
+//This is a 24-bit display, so no need to dither.
+#define LCD_DITHER       (0)
+//----------------------------------------------------------------------------
+// Pixel clock divisor (based on 60MHz internal clock)
+//   0 = disable
+//   1 = 60MHz
+//   2 = 30MHz
+//   3 = 20MHz
+//   etc
+// Our target is 33MHz, 30MHz (div of 2) is as close as we can get.
+#define LCD_PCLK         (2)
+//----------------------------------------------------------------------------
+// Frame_Rate = 30MHz / (LCD_VCYCLE*LCD_HCYCLE)
+//            = 30MHz / (863*511) = 68Hz or 14.7mS
+//----------------------------------------------------------------------------
+// Horizontal timing (minimum values from ILI6122_SPEC_V008.pdf page 45)
+// Target 60Hz frame rate, using the largest possible line time in order to
+// maximize the time that the FT8xx has to process each line.
+#define HPX   (800)    // Horizontal Pixel Width
+#define HSW   (1)      // Horizontal Sync Width (1~40)
+#define HBP   (46-HSW) // Horizontal Back Porch (must be 46, includes HSW)
+#define HFP   (16)     // Horizontal Front Porch (16~210~354)
+#define HPP   (116)    // Horizontal Pixel Padding (tot=863: 862~1056~1200)
+                       // FTDI needs at least 1 here
+// Define the constants needed by the FT8xx based on the timing
+// Active width of LCD display
+#define LCD_WIDTH   (HPX)
+// Start of horizontal sync pulse
+#define LCD_HSYNC0  (HFP)
+// End of horizontal sync pulse
+#define LCD_HSYNC1  (HFP+HSW)
+// Start of active line
+#define LCD_HOFFSET (HFP+HSW+HBP)
+// Total number of clocks per line
+#define LCD_HCYCLE  (HPX+HFP+HSW+HBP+HPP)
+//----------------------------------------------------------------------------
+// Vertical timing (minimum values from ILI6122_SPEC_V008.pdf page 46)
+#define VLH   (480)   // Vertical Line Height
+#define VS    (1)     // Vertical Sync (in lines)  (1~20)
+#define VBP   (23-VS) // Vertical Back Porch (must be 23, includes VS)
+#define VFP   (7)     // Vertical Front Porch (7~22~147)
+#define VLP   (1)     // Vertical Line Padding (tot=511: 510~525~650)
+                      // FTDI needs at least 1 here
+// Define the constants needed by the FT8xx based on the timing
+// Active height of LCD display
+#define LCD_HEIGHT  (VLH)
+// Start of vertical sync pulse
+#define LCD_VSYNC0  (VFP)
+// End of vertical sync pulse
+#define LCD_VSYNC1  (VFP+VS)
+// Start of active screen
+#define LCD_VOFFSET (VFP+VS+VBP)
+// Total number of lines per screen
+#define LCD_VCYCLE  (VLH+VFP+VS+VBP+VLP)
+//============================================================================
+
+    #define DispWidth      LCD_WIDTH
+    #define DispHeight     LCD_HEIGHT
+    #define DispHCycle     LCD_HCYCLE
+    #define DispHOffset    LCD_HOFFSET
+    #define DispHSync0     LCD_HSYNC0
+    #define DispHSync1     LCD_HSYNC1
+    #define DispVCycle     LCD_VCYCLE
+    #define DispVOffset    LCD_VOFFSET
+    #define DispVSync0     LCD_VSYNC0
+    #define DispVSync1     LCD_VSYNC1
+    #define DispPCLK       LCD_PCLK
+    #define DispSwizzle    LCD_SWIZZLE
+    #define DispPCLKPol    LCD_PCLKPOL
+    #define DispCSpread    LCD_PCLK_CSPREAD
+    #define DispDither     LCD_DITHER
+#endif
 #elif defined(DISPLAY_RESOLUTION_HVGA_PORTRAIT)
     /* Values specific to HVGA LCD display */
     #define DispWidth      320L
@@ -782,5 +872,3 @@ typedef struct Gpu_Fonts
 #endif /* #ifndef _GPU_H_ */
 
 /* Nothing beyond this */
-
-

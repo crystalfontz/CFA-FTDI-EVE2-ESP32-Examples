@@ -35,7 +35,7 @@ Connection is as follows:
 * microSD SCLK -> Seeeduino pin 13
 * microSD MISO -> Seeeduino pin 12
 * microSD MOSI -> Seeeduino pin 11
-* microSD CS/SS -> Seeeduino pin 4
+* microSD CS/SS -> Seeeduino pin 10
 
 ## Further Information
 For further information see:

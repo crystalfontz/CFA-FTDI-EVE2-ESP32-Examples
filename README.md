@@ -1,6 +1,7 @@
 
 # FTDI-Arduino-Examples-CFAF800480E0-050SC-A1
-This is a collection of modified FTDI EVE Examples for the Crystalfontz CFAF800480E0-050SC-A1-2 display kit. The kit includes a CFAF800480E0-050SC-A1 display module, a CFA10098 breakout board and a Seeeduino v4.x. 
+This is a collection of modified FTDI/Bridgetek EVE Examples for use with the Crystalfontz CFAF800480E0-050SC-A1-2 display kit.
+The kit includes a CFAF800480E0-050SC-A1 display module, a CFA10098 breakout board and a Seeeduino v4.x. 
 
 Information on the Crystalfontz CFAF800480E0-050SC-A1-2 kit may be [found here](https://www.crystalfontz.com/product/cfaf800480e0050sca12-800x480-accelerated-tft-dev-kit).
 

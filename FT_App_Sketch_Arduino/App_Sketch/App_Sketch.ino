@@ -1,11 +1,11 @@
 /*============================================================================
 // 
-// Example Ardunio/Seeduino firmware for use with the Crystalfontz
-// CFAF800480E0-050SC-A1-2 display module kit.
+// Example Espressif ESP32 SoC firmware (using Arduino platform) for use with
+// the Crystalfontz CFAF800480E0-050SC-A1 display module.
 //
 // This firmware was originally sourced from the FTDI/Bridgetek website and
-// has been slightly modified to work correctly with the Crystalfontz
-// kit hardware.
+// has been slightly modified to work correctly with the Crystalfontz and
+// ESP32 hardware.
 //
 // http://www.crystalfontz.com
 //
@@ -163,7 +163,7 @@ int32_t main(int32_t argc,char8_t *argv[])
     /* Init HW Hal */
     App_Common_Init(phost);
     /* Show Logo, do calibration and display welcome screeen */
-    App_Common_Start(phost,info);
+    App_Common_Start(phost,(char**)info);
     Sketch();   
     /* Close all the opened handles */
 	App_Common_Close(phost);
@@ -179,16 +179,3 @@ void loop()
 
 
 /* Nothing beyond this */
-
-
-
-
-
-
-
-
-
-
-
-
-

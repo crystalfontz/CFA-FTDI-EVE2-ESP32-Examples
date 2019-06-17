@@ -1,11 +1,11 @@
 /*============================================================================
 // 
-// Example Ardunio/Seeduino firmware for use with the Crystalfontz
-// CFAF800480E0-050SC-A1-2 display module kit.
+// Example Espressif ESP32 SoC firmware (using Arduino platform) for use with
+// the Crystalfontz CFAF800480E0-050SC-A1 display module.
 //
 // This firmware was originally sourced from the FTDI/Bridgetek website and
-// has been slightly modified to work correctly with the Crystalfontz
-// kit hardware.
+// has been slightly modified to work correctly with the Crystalfontz and
+// ESP32 hardware.
 //
 // http://www.crystalfontz.com
 //
@@ -1136,7 +1136,7 @@ either they can be based on itterations or based on time giffies */
             stringlen_text_run_disp = strlen(text_run_disp);
             if(t < 300)
             t++;
-            BMoffsetx = linear(480,0,t,300);
+            BMoffsetx = linear((int16_t)480,(int16_t)0,(uint16_t)t,(uint16_t)300);
             //Gpu_CoCmd_Text(phost,BMoffsetx,BMoffsety,28,OPT_CENTERX|OPT_CENTERY,"The running test is displayed here.");
             font_display(BMoffsetx,BMoffsety,stringlen_text_run_disp,text_run_disp, 1);
             //t++;
@@ -1519,7 +1519,7 @@ either they can be based on itterations or based on time giffies */
             stringlen_text_run_disp = strlen(text_run_disp);
             if(t < 200)
             t++;
-            BMoffsety = linear(0,272,t,200);
+            BMoffsety = linear((int16_t)0,(int16_t)272,(uint16_t)t,(uint16_t)200);
             
             font_display(BMoffsetx,BMoffsety,stringlen_text_run_disp,text_run_disp, 0);
         }
@@ -1586,7 +1586,7 @@ void setup()
     /* Init HW Hal */
     App_Common_Init(phost);
     /* Show Logo, do calibration and display welcome screeen */
-    App_Common_Start(phost,info);
+    App_Common_Start(phost,(char**)info);
 
 
 #ifdef ORIENTATION_PORTRAIT

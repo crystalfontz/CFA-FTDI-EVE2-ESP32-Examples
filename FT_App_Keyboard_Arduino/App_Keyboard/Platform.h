@@ -36,10 +36,11 @@ Revision History:
 #ifndef _PLATFORM_H_
 #define _PLATFORM_H_
 
+// yes, we are now compiling for ESP32, but we are still using the Arduino platform
 #define ARDUINO_PLATFORM
 
 /* Module specific configurations */
-#define CFAF800480E0_050SC_A1_2
+#define CFAF800480E0_050SC_A1
 //#define VM800P43_50
 //#define VM800P35
 //#define VM801P43_50
@@ -47,17 +48,18 @@ Revision History:
 //#define VM800B35
 //#define VM801B43_50
 
-#ifdef CFAF800480E0_050SC_A1_2
+#ifdef CFAF800480E0_050SC_A1
 #define DISPLAY_RESOLUTION_WVGA                 (1)
 #define FT813_ENABLE                            (1)
 #define ENABLE_SPI_SINGLE                       (1)
-//#define SDCARD_CS                             (8)
-#define FT800_INT                               (7)
-#define FT800_PD_N                              (8)
-#define FT800_CS                                (9)
+#define SDCARD_CS                               (15)
+#define FT800_INT                               (4)
+#define FT800_PD_N                              (0)
+#define FT800_CS                                (5)
 #define ARDUINO_PLATFORM_SPI                    (1)
 #define ME800A_HV35R /*hack to remove some defualt ext clock setup*/
 #define FT813_GT911 /*goodix gt911 enable*/
+#define SPI_CLK_FREQ                            (16000000) /* speed up SPI to 16Mhz on the ESP32 */
 #endif
 
 #ifdef VM800P43_50
@@ -156,7 +158,7 @@ Revision History:
 #endif
 
 /* Custom configuration set by the user */
-#if (!defined(VM800P43_50) && !defined(VM800P35) &&!defined(VM801P43_50) &&!defined(VM800B43_50) &&!defined(VM800B35) &&!defined(VM801B43_50) &&!defined(CFAF800480E0_050SC_A1_2))
+#if (!defined(VM800P43_50) && !defined(VM800P35) &&!defined(VM801P43_50) &&!defined(VM800B43_50) &&!defined(VM800B35) &&!defined(VM801B43_50) &&!defined(CFAF800480E0_050SC_A1))
 #define DISPLAY_RESOLUTION_QVGA                     (1)
 #define DISPLAY_RESOLUTION_WQVGA                    (1)
 #define DISPLAY_RESOLUTION_WVGA                     (1)
@@ -207,7 +209,7 @@ Revision History:
 #include <Arduino.h>
 #include <EEPROM.h>
 #include <SPI.h>
-#include <avr/pgmspace.h>
+//#include <avr/pgmspace.h>
 #include <stdint.h>
 typedef float float_t;
 
@@ -218,15 +220,15 @@ typedef boolean bool_t;
 typedef char char8_t;
 typedef unsigned char uchar8_t;
 typedef signed char   schar8_t;
-
 typedef PROGMEM const unsigned char  prog_uchar8_t;
 typedef PROGMEM const char           prog_char8_t;
-typedef PROGMEM const uint8_t        prog_uint8_t;
+/*typedef PROGMEM const uint8_t        prog_uint8_t;
 typedef PROGMEM const int8_t         prog_int8_t;
 typedef PROGMEM const uint16_t       prog_uint16_t;
 typedef PROGMEM const int16_t        prog_int16_t;
 typedef PROGMEM const uint32_t       prog_uint32_t;
 typedef PROGMEM const int32_t        prog_int32_t;
+*/
 /* HAL inclusions */
 #include "Gpu_Hal.h"
 #include "Gpu.h"

@@ -89,7 +89,7 @@ bool_t    Gpu_Hal_Open(Gpu_Hal_Context_t *host)
     pinMode(host->hal_config.spi_cs_pin_no, OUTPUT);
     digitalWrite(host->hal_config.spi_cs_pin_no, HIGH);
     SPI.begin();
-    SPI.setClockDivider(SPI_CLOCK_DIV2);
+    SPI.setClockDivider(spiFrequencyToClockDiv(SPI_CLK_FREQ)); //SPI_CLOCK_DIV2);
     SPI.setBitOrder(MSBFIRST);
     SPI.setDataMode(SPI_MODE0);
 
@@ -1356,7 +1356,7 @@ void BootupConfig(Gpu_Hal_Context_t *host)
   delay(100);
   /* Init ARDUINO SDcard */
   sd_present =  imageFile.SD.begin(SDCARD_CS); 
-  SPI.setClockDivider(SPI_CLOCK_DIV2);
+  SPI.setClockDivider(spiFrequencyToClockDiv(SPI_CLK_FREQ)); //SPI_CLOCK_DIV2);
   SPI.setBitOrder(MSBFIRST);
   SPI.setDataMode(SPI_MODE0); 
   if(!sd_present){
@@ -1399,7 +1399,7 @@ void Gpu_Hal_LoadImageToMemory(Gpu_Hal_Context_t *host, char8_t* fileName, uint3
     if(file){
         while (imageFile.offset < imageFile.size)
         {
-            uint16_t n = min(512, imageFile.size - imageFile.offset);
+            uint16_t n = min(512, (int)(imageFile.size - imageFile.offset));
             n = (n + 3) & ~3;   // force 32-bit alignment
             imageFile.readsector(imbuff);
             if(type==LOAD)

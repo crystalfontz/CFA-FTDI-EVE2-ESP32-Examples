@@ -29,7 +29,7 @@ To run the examples that use a microSD card, see the microSD Card Reader section
 * Power on the LCD module with a 3.3v supply first
 * Connect the ESP32 to your PC with a USB cable
 * Run the Arduino software, and set the board (under the Tools menu) to match the ESP32 board you are using.
-** If no ESP32 boards are listed, youll need to add "https://dl.espressif.com/dl/package_esp32_index.json" in the Arduino IDE preferences window, in the "Additional board manager URLs". Then open the Boards Manager (under Tools menu, boards), search for ESP32 and add the ESP32 libraries/tools.
+  * If no ESP32 boards are listed, youll need to add "https://dl.espressif.com/dl/package_esp32_index.json" in the Arduino IDE preferences window, in the "Additional board manager URLs". Then open the Boards Manager (under Tools menu, boards), search for ESP32 and add the ESP32 libraries/tools.
 * In the Arduino IDE Load one of the project INO files.
 * Copy the files from the associated sd_contents directory (if it exists, otherwise this step is not required) to a microSD card, and insert it into the microSD card reader attached to the ESP32.
 * Compile and upload the firmware to the ESP32

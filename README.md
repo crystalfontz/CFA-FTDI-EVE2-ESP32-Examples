@@ -1,7 +1,7 @@
 # FTDI-ESP32-Examples-CFAF800480E0-050SC-A1
-This is a collection of modified FTDI/Bridgetek EVE2 Examples for use with the Crystalfontz CFAF800480E0-050SC-A1 display, Crystalfontz CFA10098 breakout board and a Espressif ESP32 SoC.
+This is a collection of modified FTDI/Bridgetek EVE2 Examples for use with the Crystalfontz CFAF800480E0-050SC-A1-1 display, Crystalfontz CFA10098 breakout board and a Espressif ESP32 SoC.
 
-Information on the Crystalfontz CFAF800480E0-050SC-A1 display may be [found here](https://www.crystalfontz.com/product/cfaf800480e0050sca1).
+Information on the Crystalfontz CFAF800480E0-050SC-A1-1 display may be [found here](https://www.crystalfontz.com/product/cfaf800480e0050sca11).
 The Crystalfontz CFA10098 breakout board may be [found here](https://www.crystalfontz.com/product/cfa10098).
 
 More EVE examples are available on the FTDI website, but those not listed here are not compatible with the EVE2 (FT91x) or were not programmed to run correctly on a display of this size (800x480 pixels).
@@ -49,7 +49,7 @@ Connection is as follows:
 
 ## Further Information
 For further information see:
-* [Crystalfontz CFAF800480E0-050SC-A1 product page](https://www.crystalfontz.com/product/cfaf800480e0050sca1)
+* [Crystalfontz CFAF800480E0-050SC-A1-1 product page](https://www.crystalfontz.com/product/cfaf800480e0050sca11)
 * [Crystalfontz CFA10098 product page](https://www.crystalfontz.com/product/cfa10098)
 * [Crystalfontz Technical Forum](http://forum.crystalfontz.com/)
 * [FTDI / Bridgetek EVE Example Projects](https://www.ftdichip.com/Support/SoftwareExamples/FT800_Projects.htm)

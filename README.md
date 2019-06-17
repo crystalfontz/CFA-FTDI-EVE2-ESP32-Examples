@@ -7,7 +7,7 @@ The Crystalfontz CFA10098 breakout board may be [found here](https://www.crystal
 More EVE examples are available on the FTDI website, but those not listed here are not compatible with the EVE2 (FT91x) or were not programmed to run correctly on a display of this size (800x480 pixels).
 
 ## Getting Started
-Our testing was completed using a NodeMCU ESP-32s development board.
+Our testing was performed using a NodeMCU ESP-32s development board.
 If you are using a different development board, the pinout may be different, so be sure to double check the connections are correct.
 
 Connections required are as follows:

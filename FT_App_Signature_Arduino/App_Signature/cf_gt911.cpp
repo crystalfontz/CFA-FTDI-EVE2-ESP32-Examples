@@ -63,7 +63,7 @@
 
 #include "cf_gt911.h"
 
-#ifdef FT813_GT911
+#ifdef FT81X_GT911
 
 //Used to send cap-touch init code to FT8xx from progmem
 //Magic binary data from "AN_336 FT8xx - Selecting an LCD Display"
@@ -147,7 +147,7 @@ const uint8_t Goodix_GT911_Init_Data[GOODIX_GT911_INIT_DATA_LENGTH] PROGMEM = {
   0x1A,0xFF,0xFF,0xFF,0x20,0x20,0x30,0x00,0x04,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
 //----------------------------------------------------------------------------
 
-void FT8xx_Init_Goodix_GT911(Gpu_Hal_Context_t *phost)
+void FT81x_Init_Goodix_GT911(Gpu_Hal_Context_t *phost)
 {
   //Sets up address, writes the data blob, and executes
   Gpu_Hal_WrCmdBufFromFlash(phost, Goodix_GT911_Init_Data, GOODIX_GT911_INIT_DATA_LENGTH);

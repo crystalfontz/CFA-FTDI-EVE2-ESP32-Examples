@@ -36,32 +36,14 @@
 //
 //For more information, please refer to <http://unlicense.org/>
 //============================================================================
-// Adapted from:
-// FTDIChip AN_275 FT800 with Arduino - Version 1.0
-//
-// Copyright (c) Future Technology Devices International
-//
-// THIS SOFTWARE IS PROVIDED BY FUTURE TECHNOLOGY DEVICES INTERNATIONAL
-// LIMITED "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
-// PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL FUTURE TECHNOLOGY
-// DEVICES INTERNATIONAL LIMITED BE LIABLE FOR ANY DIRECT, INDIRECT,
-// INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-// NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES LOSS OF USE,
-// DATA, OR PROFITS OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
-// OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-// NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
-// EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-//
-// This code is provided as an example only and is not guaranteed by
-// FTDI/BridgeTek. FTDI/BridgeTek accept no responsibility for any issues
-// resulting from its use. By using this code, the developer of the final
-// application incorporating any parts of this sample project agrees to take
-// full responsible for ensuring its safe and correct operation and for any
-// consequences resulting from its use.
-//===========================================================================
+
+#ifndef _CF_CTOUCH_H
+#define _CF_CTOUCH_H
 
 #include "Platform.h"
+
+#ifdef FT81X_CTOUCH
+
 #include "App_Common.h"
 #include "Gpu.h"
 #include "Hal_Config.h"
@@ -82,4 +64,8 @@
 #define REG_CTOUCH_TOUCH4_X     (3154284UL) //   0x30216C
 #define REG_CTOUCH_TOUCH4_Y     (3154208UL) //   0x302120
 
-void FT81x_Init_Goodix_GT911(Gpu_Hal_Context_t *phost);
+void FT81x_Init_CTouch(Gpu_Hal_Context_t *phost);
+
+#endif
+
+#endif

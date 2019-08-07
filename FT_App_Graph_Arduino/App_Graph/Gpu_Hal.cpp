@@ -40,6 +40,7 @@ Revision History:
 #include "Hal_Config.h"
 
 #include "cf_gt911.h"
+#include "cf_ctouch.h"
 
 #ifdef USE_SDCARD
 #include "sdcard.h"
@@ -89,7 +90,7 @@ bool_t    Gpu_Hal_Open(Gpu_Hal_Context_t *host)
     pinMode(host->hal_config.spi_cs_pin_no, OUTPUT);
     digitalWrite(host->hal_config.spi_cs_pin_no, HIGH);
     SPI.begin();
-    SPI.setClockDivider(spiFrequencyToClockDiv(SPI_CLK_FREQ)); //SPI_CLOCK_DIV2);
+    SPI.setClockDivider(SPI_CLOCK_DIV2);
     SPI.setBitOrder(MSBFIRST);
     SPI.setDataMode(SPI_MODE0);
 
@@ -1238,10 +1239,12 @@ void BootupConfig(Gpu_Hal_Context_t *host)
   Gpu_Hal_Sleep(300);
 
     /* Set the clk to external clock */
+/* removed for everything Crystalfontz    
 #if (!defined(ME800A_HV35R) && !defined(ME810A_HV35R) && !defined(ME812AU_WH50R) && !defined(ME813AU_WH50C) && !defined(ME810AU_WH70R) && !defined(ME811AU_WH70C))
   Gpu_HostCommand(host,GPU_EXTERNAL_OSC);
   Gpu_Hal_Sleep(10);
 #endif
+*/
 
   uint8_t chipid;
   //Read Register ID to check if FT800 is ready.
@@ -1253,15 +1256,18 @@ void BootupConfig(Gpu_Hal_Context_t *host)
   }
   
   /* Configuration of LCD display */
-#if defined(FT813_GT911)
+#if defined(FT81X_GT911)
   //Crystalfontz - added capacitive panel setup
-  FT8xx_Init_Goodix_GT911(host);
+  FT81x_Init_Goodix_GT911(host);
 #endif
 
-#if defined(ME800A_HV35R)
+#if defined(FT81X_CTOUCH)
+  //Crystalfontz - send bug-fixed cap touch data
+  FT81x_Init_CTouch(host);
+#endif
+
     /* After recognizing the type of chip, perform the trimming if necessary */
     Gpu_ClockTrimming(host,LOW_FREQ_BOUND);
-#endif
 
     Gpu_Hal_Wr16(host, REG_HCYCLE, DispHCycle);
     Gpu_Hal_Wr16(host, REG_HOFFSET, DispHOffset);
@@ -1293,7 +1299,7 @@ void BootupConfig(Gpu_Hal_Context_t *host)
 #endif
 */
 
-#if defined(FT813_GT911)
+#if defined(FT81X_GT911)
   //Crystalfontz - added capacitive panel setup
   //Touch on, at rate of touch IC
   Gpu_Hal_Wr8(host, REG_CTOUCH_MODE, CTOUCH_MODE_CONTINUOUS);
@@ -1356,7 +1362,7 @@ void BootupConfig(Gpu_Hal_Context_t *host)
   delay(100);
   /* Init ARDUINO SDcard */
   sd_present =  imageFile.SD.begin(SDCARD_CS); 
-  SPI.setClockDivider(spiFrequencyToClockDiv(SPI_CLK_FREQ)); //SPI_CLOCK_DIV2);
+  SPI.setClockDivider(SPI_CLOCK_DIV2);
   SPI.setBitOrder(MSBFIRST);
   SPI.setDataMode(SPI_MODE0); 
   if(!sd_present){
@@ -1399,7 +1405,7 @@ void Gpu_Hal_LoadImageToMemory(Gpu_Hal_Context_t *host, char8_t* fileName, uint3
     if(file){
         while (imageFile.offset < imageFile.size)
         {
-            uint16_t n = min(512, (int)(imageFile.size - imageFile.offset));
+            uint16_t n = min(512, imageFile.size - imageFile.offset);
             n = (n + 3) & ~3;   // force 32-bit alignment
             imageFile.readsector(imbuff);
             if(type==LOAD)

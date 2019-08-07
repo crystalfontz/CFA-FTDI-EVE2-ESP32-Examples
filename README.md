@@ -1,5 +1,5 @@
-# FTDI-ESP32-Examples-CFAF800480E0-050SC-A1
-This is a collection of modified FTDI/Bridgetek EVE2 Examples for use with the Crystalfontz CFAF800480E0-050SC-A1-1 display, Crystalfontz CFA10098 breakout board and a Espressif ESP32 SoC.
+# Crystalfontz FTDI EVE2 ESP32 System-on-chip Examples
+This is a collection of modified FTDI/Bridgetek EVE Examples for use with Crystalfontz EVE2 accelerated display modules and a Espressif ESP32 SoC.
 
 Information on the Crystalfontz CFAF800480E0-050SC-A1-1 display may be [found here](https://www.crystalfontz.com/product/cfaf800480e0050sca11).
 The Crystalfontz CFA10098 breakout board may be [found here](https://www.crystalfontz.com/product/cfa10098).
@@ -11,7 +11,7 @@ Our testing was performed using a NodeMCU ESP-32s development board.
 If you are using a different development board, the pinout may be different, so be sure to double check the connections are correct.
 
 Connections required are as follows:
-* CFAF800480E0-050SC-A1 -> CFA10098 (using an appropriate flat-flex cable)
+* Crystalfontz EVE2 accelerated display -> CFA10098 (using an appropriate flat-flex cable)
 * CFA10098 3.3v -> 3.3v power supply (independent 3.3v 1A supply, NOT the ESP32 3.3v!)
 * CFA10098 GND -> 3.3v power supply ground (as above)
 * CFA10098 SCK -> NodeMCU-ESP32s pin P18
@@ -25,7 +25,7 @@ Connections required are as follows:
 To run the examples that use a microSD card, see the microSD Card Reader section below.
 ## Running an Example
 * Download the examples from here to your PC
-* Connect the CFAF800480E0-050SC-A1 display, CFA10098 breakout board, and ESP32 as above.
+* Connect the Crystalfontz EVE2 accelerated display, CFA10098 breakout board, and ESP32 as above.
 * Power on the LCD module with a 3.3v supply first
 * Connect the ESP32 to your PC with a USB cable
 * Run the Arduino software, and set the board (under the Tools menu) to match the ESP32 board you are using.

@@ -44,13 +44,14 @@ Revision History:
 
 //#define CFAF800480E0_050SC_A1_2
 //#define CFAF240400C0_030SC_A1_2
+//#define CFAF320240F_035TS_A1_2
 
 /////////////////////////////////////////////////////////////
 
 //check
-#if (!defined(CFAF800480E0_050SC_A1_2) && !defined(CFAF240400C0_030SC_A1_2))
+#if (!defined(CFAF800480E0_050SC_A1_2) && !defined(CFAF240400C0_030SC_A1_2) && !defined(CFAF320240F_035TS_A1_2))
 //if you get a build error here, one of the module types above has not been un-commented
-#error TARGET MODULE TYPE NOT SELECTED!
+#error TARGET MODULE TYPE NOT SELECTED, CHOOSE ONE IN PLATFORM.H!
 #endif
 
 /////////////////////////////////////////////////////////////
@@ -206,6 +207,87 @@ Revision History:
 #define VFP   (7)     // Vertical Front Porch (7~22~147)
 #define VLP   (1)     // Vertical Line Padding (tot=511: 510~525~650)
                       // FTDI needs at least 1 here
+// Define the constants needed by the FT8xx based on the timing
+// Active height of LCD display
+#define LCD_HEIGHT  (VLH)
+// Start of vertical sync pulse
+#define LCD_VSYNC0  (VFP)
+// End of vertical sync pulse
+#define LCD_VSYNC1  (VFP+VS)
+// Start of active screen
+#define LCD_VOFFSET (VFP+VS+VBP)
+// Total number of lines per screen
+#define LCD_VCYCLE  (VLH+VFP+VS+VBP+VLP)
+//============================================================================
+#endif
+
+#ifdef CFAF320240F_035TS_A1_2
+//HAL Configs for Crystalfontz CFAF320240F_035TS_A1_1
+#define DISPLAY_RESOLUTION_WVGA                 (1)
+#define FT81X_ENABLE                            (1)
+#define ENABLE_SPI_SINGLE                       (1)
+#define SDCARD_CS                               (15)
+#define FT800_INT                               (4)
+#define FT800_PD_N                              (0)
+#define FT800_CS                                (5)
+#define ARDUINO_PLATFORM_SPI                    (1)
+#define SPI_CLK_FREQ                            (16000000) /* speed up SPI to 16Mhz on the ESP32 */
+#define FT81X_RTOUCH /* resistive touch */
+
+//Timing for Crystalfontz CFAF320240F_035TS_A1_1
+//============================================================================
+// Define RGB output pins order, determined by PCB layout
+#define LCD_SWIZZLE      (2)
+// Define active edge of PCLK. Observed by scope:
+//  0: Data is put out coincident with falling edge of the clock.
+//     Rising edge of the clock is in the middle of the data.
+//  1: Data is put out coincident with rising edge of the clock.
+//     Falling edge of the clock is in the middle of the data.
+#define LCD_PCLKPOL      (0)
+// LCD drive strength: 0=5mA, 1=10mA
+#define LCD_DRIVE_10MA   (0)
+// Spread Spectrum on RGB signals. Probably not a good idea at higher
+// PCLK frequencies.
+#define LCD_PCLK_CSPREAD (0)
+//This is not a 24-bit display, so dither.
+#define LCD_DITHER       (1)
+//----------------------------------------------------------------------------
+// Pixel clock divisor (based on 60MHz internal clock)
+//   0 = disable
+//   1 = 60MHz
+//   2 = 30MHz
+//   3 = 20MHz
+//   etc
+#define LCD_PCLK         (8)
+//----------------------------------------------------------------------------
+// Horizontal timing (minimum values from ILI6122_SPEC_V008.pdf page 45)
+// Target 60Hz frame rate, using the largest possible line time in order to
+// maximize the time that the FT8xx has to process each line.
+#define HPX   (320)  // Horizontal Pixel Width
+#define HSW   (10)   // Horizontal Sync Width
+#define HBP   (20)   // Horizontal Back Porch
+#define HFP   (10)   // Horizontal Front Porch
+#define HPP   (150)  // Horizontal Pixel Padding (empirical)
+
+// Define the constants needed by the FT8xx based on the timing
+// Active width of LCD display
+#define LCD_WIDTH   (HPX)
+// Start of horizontal sync pulse
+#define LCD_HSYNC0  (HFP)
+// End of horizontal sync pulse
+#define LCD_HSYNC1  (HFP+HSW)
+// Start of active line
+#define LCD_HOFFSET (HFP+HSW+HBP)
+// Total number of clocks per line
+#define LCD_HCYCLE  (HPX+HFP+HSW+HBP+HPP)
+//----------------------------------------------------------------------------
+// Vertical timing (minimum values from ILI6122_SPEC_V008.pdf page 46)
+#define VLH   (240) // Vertical Line Height
+#define VS    (3)   // Vertical Sync (in lines)
+#define VBP   (0)   // Vertical Back Porch
+#define VFP   (1)   // Vertical Front Porch
+#define VLP   (1)   // Vertical Line Padding (empirical)
+
 // Define the constants needed by the FT8xx based on the timing
 // Active height of LCD display
 #define LCD_HEIGHT  (VLH)

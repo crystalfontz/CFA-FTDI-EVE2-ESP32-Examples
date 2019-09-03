@@ -1284,12 +1284,7 @@ void BootupConfig(Gpu_Hal_Context_t *host)
     Gpu_Hal_Wr16(host, REG_CSPREAD, DispCSpread);
     Gpu_Hal_Wr16(host, REG_DITHER, DispDither);
 
-#if (defined(FT800_ENABLE) || defined(FT810_ENABLE) ||defined(FT812_ENABLE))
-    /* Touch configuration - configure the resistance value to 1200 - this value is specific to customer requirement and derived by experiment */
-    Gpu_Hal_Wr16(host, REG_TOUCH_RZTHRESH,RESISTANCE_THRESHOLD);
-#endif
-
-/* Crystalfontz - removed as it effect GT911 setup
+/* Crystalfontz - removed as it effected GT911 setup
 #if defined(FT81X_ENABLE)
     Gpu_Hal_Wr16(host, REG_GPIOX_DIR, 0xffff);
     Gpu_Hal_Wr16(host, REG_GPIOX, 0xffff);
@@ -1306,6 +1301,23 @@ void BootupConfig(Gpu_Hal_Context_t *host)
   //Set compatibility (single touch) mode until after touch cal.
   Gpu_Hal_Wr8(host, REG_CTOUCH_EXTEND, CTOUCH_EXTEND_COMPATIBILITY);
 #endif // (TOUCH_TYPE==TOUCH_CAPACITIVE)
+
+#if defined(FT81X_RTOUCH)
+  //Crystalfontz - resistive panel setup
+  //Set the threshold somewhere reasonable.
+  Gpu_Hal_Wr16(host, REG_TOUCH_RZTHRESH, 1200);
+  //Oversample - higher current better resolution
+  Gpu_Hal_Wr8(host, REG_TOUCH_OVERSAMPLE, 6);
+  //Touch on, once per frame
+  Gpu_Hal_Wr8(host, REG_TOUCH_MODE, TOUCHMODE_FRAME);
+#endif
+
+#if defined(FT81X_NOTOUCH)
+  //Crystalfontz - disable touch
+  FT8xx_REG_Write_8(REG_TOUCH_MODE, 0);
+  // Eliminate any false touches
+  FT8xx_REG_Write_16(REG_TOUCH_RZTHRESH, 0);
+#endif
 
   //Clear the screen
   Gpu_Hal_WrMem(host, RAM_DL,(uint8_t *)DLCODE_BOOTUP,sizeof(DLCODE_BOOTUP));
@@ -1355,7 +1367,7 @@ void BootupConfig(Gpu_Hal_Context_t *host)
   //read back pointer position
   host->cmd_fifo_wp = Gpu_Hal_Rd16(host,REG_CMD_WRITE);
   
-  #ifdef USE_SDCARD 
+#ifdef USE_SDCARD 
   /* Init HW Hal */
   pinMode(SDCARD_CS,OUTPUT);
   digitalWrite(SDCARD_CS,HIGH);
@@ -1376,7 +1388,7 @@ void BootupConfig(Gpu_Hal_Context_t *host)
       Gpu_Hal_WaitCmdfifo_empty(host);
     }
   }
-  #endif
+#endif
 }
 
 void Gpu_Hal_LoadImageToMemory(Gpu_Hal_Context_t *host, char8_t* fileName, uint32_t destination, uint8_t type){
@@ -1413,10 +1425,10 @@ void Gpu_Hal_LoadImageToMemory(Gpu_Hal_Context_t *host, char8_t* fileName, uint3
                 Gpu_Hal_WrMem(host,destination,imbuff, n);//alignment is already taken care by this api
                 destination += n;
             }
-			else
-			{
-				Gpu_Hal_WrCmdBuf_nowait(host,imbuff, n);//transfer data completely and check/wait for the last chunk only
-			}
+      else
+      {
+        Gpu_Hal_WrCmdBuf_nowait(host,imbuff, n);//transfer data completely and check/wait for the last chunk only
+      }
 
         }
     }

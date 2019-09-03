@@ -61,7 +61,13 @@
 // consequences resulting from its use.
 //===========================================================================
 
+#ifndef _CF_GT911_H
+#define _CF_GT911_H
+
 #include "Platform.h"
+
+#ifdef FT81X_GT911
+
 #include "App_Common.h"
 #include "Gpu.h"
 #include "Hal_Config.h"
@@ -83,3 +89,7 @@
 #define REG_CTOUCH_TOUCH4_Y     (3154208UL) //   0x302120
 
 void FT81x_Init_Goodix_GT911(Gpu_Hal_Context_t *phost);
+
+#endif
+
+#endif

@@ -173,7 +173,7 @@ void FT81x_Init_Goodix_GT911(Gpu_Hal_Context_t *phost)
   // "Set GPIO0 to input (floating)"
   // The CFA10100 FT813 uses GPIO3 to reset GT911
   Gpu_Hal_Wr16(phost,REG_GPIOX_DIR,0x8000);
-  
+
   //done
 }
 

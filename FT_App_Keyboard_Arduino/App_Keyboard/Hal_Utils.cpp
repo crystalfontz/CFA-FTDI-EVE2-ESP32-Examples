@@ -104,7 +104,7 @@ float_t cal_average(float_t * ptr_elements , uint16_t elements)
 #ifdef POLAR_UTIL
 
 /* Optimized implementation of sin and cos table - precision is 16 bit */
-PROGMEM prog_uint16_t sintab[] = {
+const uint16_t sintab[] = {
     0, 402, 804, 1206, 1607, 2009, 2410, 2811, 3211, 3611, 4011, 4409, 4807, 5205, 5601, 5997, 6392,
     6786, 7179, 7571, 7961, 8351, 8739, 9126, 9511, 9895, 10278, 10659, 11038, 11416, 11792, 12166, 12539,
     12909, 13278, 13645, 14009, 14372, 14732, 15090, 15446, 15799, 16150, 16499, 16845, 17189, 17530, 17868,
@@ -126,8 +126,8 @@ int16_t qsin(uint16_t a)
     if (a & 16384)
     a = 32768 - a;
     f = a & 127;
-    s0 = pgm_read_word(sintab + (a >> 7));
-    s1 = pgm_read_word(sintab + (a >> 7) + 1);
+    s0 = sintab[a >> 7];
+    s1 = sintab[(a >> 7) + 1];
     return (s0 + ((int32_t)f * (s1 - s0) >> 7));
 }
 

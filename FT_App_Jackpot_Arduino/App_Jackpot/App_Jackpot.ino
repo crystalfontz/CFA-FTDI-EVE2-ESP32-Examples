@@ -39,6 +39,11 @@ Version 0.1 - initial draft of the release notes
 #include "ff.h"
 #endif
 
+//check lcd dimensions
+#if (defined(CFAF240400C0_030SC_A1_2) || defined(CFAF480128A0_039TC_A1_2))
+#error THIS EXAMPLE DOES NOT VISUALLY LOOK CORRECT DUE TO THE DISPLAYS SIZE, REMOVE THIS ERROR LINE TO TEST ANYWAY
+#endif
+
 #define NORMAL_PRESSURE 1200
 #define MAX_ADDITIONAL_VEL 64
 #define BASE_VELOCITY 32

@@ -37,6 +37,10 @@ Version 0.1 - initial draft of the release notes
 #include "App_Lift.h"
 #include "App_Common.h"
 
+#if (defined(CFAF480128A0_039TC_A1_2))
+#error THIS EXAMPLE DOES NOT VISUALLY LOOK CORRECT DUE TO THE DISPLAYS SIZE, REMOVE THIS ERROR LINE TO TEST ANYWAY
+#endif
+
 #define STARTUP_ADDRESS  100*1024L
 
 #define AUDIO_SECTORS  4

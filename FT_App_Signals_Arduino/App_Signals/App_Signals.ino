@@ -34,6 +34,10 @@ Version 0.1 - initial draft of the release notes
 #include "Platform.h"
 #include "App_Common.h"
 
+#if (defined(CFAF480128A0_039TC_A1_2))
+#error THIS EXAMPLE DOES NOT VISUALLY LOOK CORRECT DUE TO THE DISPLAYS SIZE, REMOVE THIS ERROR LINE TO TEST ANYWAY
+#endif
+
 /* Global used for Hal Context */
 Gpu_Hal_Context_t host,*phost;
 
